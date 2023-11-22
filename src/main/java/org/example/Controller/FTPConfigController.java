@@ -19,6 +19,9 @@ public class FTPConfigController{
         view.getInstallButton().addActionListener(new InstallButtonListener());
         view.getStatusButton().addActionListener(new StatusButtonListener());
         view.getInstallCDButton().addActionListener(new InstallCDButtonListener());
+        view.getStartButton().addActionListener(new StartButtonListener());
+        view.getRestartButton().addActionListener(new RestartButtonListener());
+        view.getStopButton().addActionListener(new StopButtonListener());
     }
 
     private class InstallButtonListener implements ActionListener{
@@ -144,5 +147,85 @@ public class FTPConfigController{
         }
     }
 
+    private class StartButtonListener implements ActionListener{
 
+        @Override
+        public void actionPerformed(ActionEvent e){
+            try{
+                ProcessBuilder startBuilder = new ProcessBuilder("sudo", "-S", "systemctl",
+                        "start", "vsftpd");
+                startBuilder.redirectErrorStream(true);
+                Process startProcess = startBuilder.start();
+
+                PrintWriter writer = new PrintWriter(startProcess.getOutputStream());
+                writer.write("root\n");
+                writer.flush();
+
+                int startExitCode = startProcess.waitFor();
+
+                if(startExitCode == 0){
+                    System.out.println("Servicio iniciado con éxito.");
+                }else{
+                    System.err.println("Error al inicar el servicio. Código de salida: " + startExitCode);
+                }
+
+            }catch(IOException | InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private class RestartButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e){
+            try{
+                ProcessBuilder restartBuilder = new ProcessBuilder("sudo", "-S", "systemctl",
+                        "restart", "vsftpd");
+                restartBuilder.redirectErrorStream(true);
+                Process restartProcess = restartBuilder.start();
+
+                PrintWriter writer = new PrintWriter(restartProcess.getOutputStream());
+                writer.write("root\n");
+                writer.flush();
+
+                int restartExitCode = restartProcess.waitFor();
+
+                if(restartExitCode == 0){
+                    System.out.println("Servicio reiniciado con éxito.");
+                }else{
+                    System.err.println("Error al reiniciar el servicio. Código de salida: " + restartExitCode);
+                }
+            }catch(IOException | InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private class StopButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e){
+            try{
+                ProcessBuilder stopBuilder = new ProcessBuilder("sudo", "-S", "systemctl",
+                        "stop", "vsftpd");
+                stopBuilder.redirectErrorStream(true);
+                Process stopProcess = stopBuilder.start();
+
+                PrintWriter writer = new PrintWriter(stopProcess.getOutputStream());
+                writer.write("root\n");
+                writer.flush();
+
+                int stopExitCode = stopProcess.waitFor();
+
+                if(stopExitCode == 0){
+                    System.out.println("Servicio detenido con éxito.");
+                }else{
+                    System.err.println("Error al detener el servicio. Código de salida: " + stopExitCode);
+                }
+            }catch(IOException | InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }
+    }
 }
