@@ -8,7 +8,11 @@ public class FTPConfigView extends JFrame{
 
     private JButton installCDButton;
     private JButton statusButton;
+    private JButton startButton;
+    private JButton restartButton;
+    private JButton stopButton;
     private JLabel statusLabel;
+    private JLabel isRunningLabel;
 
     public FTPConfigView(){
         initializeUI();
@@ -18,18 +22,31 @@ public class FTPConfigView extends JFrame{
         installButton = new JButton("Instalar FTP");
         installCDButton = new JButton("Instalar FTP desde CD");
         statusButton = new JButton("Verificar Estado");
-
+        startButton = new JButton("Iniciar FTP");
+        restartButton = new JButton("Reiniciar FTP");
+        stopButton = new JButton("Detener FTP");
         statusLabel = new JLabel("Estado del servidor FTP: ");
+        isRunningLabel = new JLabel("Estado del servidor FTP: ");
 
-        JPanel panel = new JPanel();
-        panel.add(installCDButton);
-        panel.add(installButton);
-        panel.add(statusButton);
+        JPanel buttonStatusPanel = new JPanel();
+        buttonStatusPanel.add(statusButton);
+        buttonStatusPanel.add(startButton);
+        buttonStatusPanel.add(restartButton);
+        buttonStatusPanel.add(stopButton);
 
+        JPanel buttonInstallPanel = new JPanel();
+        buttonInstallPanel.add(installCDButton);
+        buttonInstallPanel.add(installButton);
+
+        JPanel statusPanel = new JPanel();
+        statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
+        statusPanel.add(statusLabel);
+        statusPanel.add(isRunningLabel);
+        
         setLayout(new BorderLayout());
-        add(panel, BorderLayout.CENTER);
-
-        add(statusLabel, BorderLayout.SOUTH);
+        add(buttonInstallPanel, BorderLayout.NORTH);
+        add(buttonStatusPanel, BorderLayout.CENTER);
+        add(statusPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 300);
@@ -46,7 +63,25 @@ public class FTPConfigView extends JFrame{
         return statusButton;
     }
 
+    public JButton getInstallCDButton() {
+        return installCDButton;
+    }
     public JLabel getStatusLabel(){
         return statusLabel;
+    }
+    public JButton getStartButton() {
+        return startButton;
+    }
+
+    public JButton getRestartButton() {
+        return restartButton;
+    }
+
+    public JButton getStopButton() {
+        return stopButton;
+    }
+
+    public JLabel getIsRunningLabel(){
+        return isRunningLabel;
     }
 }
