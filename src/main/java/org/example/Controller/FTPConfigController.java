@@ -1,12 +1,17 @@
 package org.example.Controller;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.example.View.FTPConfigView;
 import org.example.Model.FTPConfigModel;
 import org.example.View.PasswordDialog;
+
+import javax.swing.*;
 
 public class FTPConfigController {
     private FTPConfigView view;
@@ -22,6 +27,12 @@ public class FTPConfigController {
         view.getStartButton().addActionListener(new StartButtonListener());
         view.getRestartButton().addActionListener(new RestartButtonListener());
         view.getStopButton().addActionListener(new StopButtonListener());
+        view.getMostrarConf().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mostrarFormulario();
+            }
+        });
     }
 
     private class InstallButtonListener implements ActionListener {
@@ -326,5 +337,195 @@ public class FTPConfigController {
 
             return passwordDialog.getPassword();
         }
+    }
+
+    private static void mostrarFormulario() {
+        try{
+            JFrame formulario = new JFrame("Formulario de Configuración");
+            formulario.setSize(800, 600);
+            formulario.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            File archivo = new File("/etc/vsftpd.conf");
+
+            if (!archivo.exists() || archivo.length() == 0) {
+                System.out.println("El archivo no se encontró o está vacío.");
+
+                return;
+            }
+
+            JPanel panelPrincipal = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            Map<Integer, JLabel> labelsMap = new HashMap<>();
+            Map<Integer, JComponent> componentMap = new HashMap<>();
+
+            // Números de línea que deseas recuperar
+            int[] lineNumbers = {19, 23, 27, 53, 80, 88, 118, 150, 171, 179, 184, 189, 194, 199, 200};
+
+            for (int lineNumber : lineNumbers) {
+                String linea = obtenerLineaPorNumero( "/etc/vsftpd.conf", lineNumber);
+                String variable = obtenerNombreVariable(linea);
+                String valor = obtenerValorVariable(linea);
+
+                JLabel label = new JLabel(variable );
+                JComponent componente;
+
+                if ("YES".equals(valor) || "NO".equals(valor)) {
+                    JComboBox<String> comboBox = new JComboBox<>(new String[]{"YES", "NO"});
+                    comboBox.setSelectedItem(valor);
+                    comboBox.setPreferredSize(new Dimension(150, 25));
+                    componente = comboBox;
+                } else {
+                    JTextField textField = new JTextField(valor);
+                    textField.setPreferredSize(new Dimension(150, 25));
+                    componente = textField;
+                }
+
+                panelPrincipal.add(label, gbc);
+                gbc.gridx++;
+                panelPrincipal.add(componente, gbc);
+
+                labelsMap.put(lineNumber, label);
+                componentMap.put(lineNumber, componente);
+
+                gbc.gridx = 0;
+                gbc.gridy++;
+            }
+
+            // Botones de Guardar y Cancelar
+            JButton guardarButton = new JButton("Guardar");
+            guardarButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Guarda los cambios en el archivo
+                    guardarCambios(labelsMap, componentMap);
+                    formulario.dispose(); // Cierra la ventana del formulario
+                }
+            });
+
+            JButton cancelarButton = new JButton("Cancelar");
+            cancelarButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    formulario.dispose(); // Cierra la ventana del formulario
+                }
+            });
+
+            // Agregar componentes a los paneles
+            JPanel botonesPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            botonesPanel.add(guardarButton);
+            botonesPanel.add(cancelarButton);
+
+            formulario.add(panelPrincipal, BorderLayout.CENTER);
+            formulario.add(botonesPanel, BorderLayout.SOUTH);
+
+            formulario.setVisible(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void guardarCambios(Map<Integer, JLabel> labelsMap, Map<Integer, JComponent> componentMap) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo","sed", "-i");
+
+            // Modifica las líneas según los cambios en el formulario
+            for (Map.Entry<Integer, JLabel> entry : labelsMap.entrySet()) {
+                int lineNumber = entry.getKey();
+                JLabel label = entry.getValue();
+                JComponent component = componentMap.get(lineNumber);
+
+                String nuevaLinea = label.getText() + "=";
+
+                if (component instanceof JTextField) {
+                    nuevaLinea += ((JTextField) component).getText();
+                } else if (component instanceof JComboBox) {
+                    nuevaLinea += ((JComboBox<?>) component).getSelectedItem().toString();
+                }
+
+                // Agrega el número de línea al comando sed
+                processBuilder.command().add("-e");
+                processBuilder.command().add(lineNumber + "s/.*/" + nuevaLinea + "/");
+
+            }
+
+            // Agrega el nombre del archivo al comando sed
+            processBuilder.command().add( "/etc/vsftpd.conf");
+
+            // Ejecuta el comando
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                System.err.println("Error al ejecutar sed. Código de salida: " + exitCode);
+                try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        System.err.println(line);
+                    }
+                }
+            } else {
+                System.out.println("Cambios aplicados correctamente.");
+            }
+            reiniciarServicioFTP();
+            System.out.print("linea nueva: " + processBuilder.command());
+
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
+
+    private static void reiniciarServicioFTP() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sudo", "service", "vsftpd","restart" );
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                System.err.println("Error al reiniciar el servicio. Código de salida: " + exitCode);
+                try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = errorReader.readLine()) != null) {
+                        System.err.println(line);
+                    }
+                }
+            } else {
+                System.out.println("Servicio reiniciado correctamente.");
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            System.out.println(e);
+        }
+    }
+
+
+    private static String obtenerLineaPorNumero(String rutaArchivo, int numeroLinea) {
+        try {
+            Process process = Runtime.getRuntime().exec("sudo sed -n " + numeroLinea + "p " + rutaArchivo);
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                return reader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static String obtenerNombreVariable(String linea) {
+        if (linea != null && linea.contains("=")) {
+            return linea.split("=")[0];
+        }
+        return "";
+    }
+
+    private static String obtenerValorVariable(String linea) {
+        if (linea != null && linea.contains("=")) {
+            return linea.split("=")[1];
+        }
+        return "";
     }
 }

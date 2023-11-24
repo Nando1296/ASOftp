@@ -11,6 +11,7 @@ public class FTPConfigView extends JFrame {
     private JButton startButton;
     private JButton restartButton;
     private JButton stopButton;
+    private JButton mostrarConf;
     private JLabel statusLabel;
     private JLabel isRunningLabel;
     private JLabel changeStatusLabel;
@@ -26,6 +27,7 @@ public class FTPConfigView extends JFrame {
         startButton = new JButton("Iniciar FTP");
         restartButton = new JButton("Reiniciar FTP");
         stopButton = new JButton("Detener FTP");
+        mostrarConf = new JButton("Mostrar Configuración");
         statusLabel = new JLabel("Estado del servidor FTP: ");
         isRunningLabel = new JLabel("Estado del servidor FTP: ");
         changeStatusLabel = new JLabel("En espera...");
@@ -35,6 +37,7 @@ public class FTPConfigView extends JFrame {
         buttonStatusPanel.add(restartButton);
         buttonStatusPanel.add(stopButton);
         buttonStatusPanel.add(changeStatusLabel);
+        buttonStatusPanel.add(mostrarConf);
 
         JPanel buttonInstallPanel = new JPanel();
         buttonInstallPanel.add(installCDButton);
@@ -93,4 +96,5 @@ public class FTPConfigView extends JFrame {
     public JLabel getChangeStatusLabel() {
         return changeStatusLabel;
     }
+    public JButton getMostrarConf(){return mostrarConf;}
 }
