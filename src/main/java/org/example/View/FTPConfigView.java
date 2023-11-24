@@ -3,7 +3,7 @@ package org.example.View;
 import javax.swing.*;
 import java.awt.*;
 
-public class FTPConfigView extends JFrame{
+public class FTPConfigView extends JFrame {
     private JButton installButton;
 
     private JButton installCDButton;
@@ -13,12 +13,13 @@ public class FTPConfigView extends JFrame{
     private JButton stopButton;
     private JLabel statusLabel;
     private JLabel isRunningLabel;
+    private JLabel changeStatusLabel;
 
-    public FTPConfigView(){
+    public FTPConfigView() {
         initializeUI();
     }
 
-    private void initializeUI(){
+    private void initializeUI() {
         installButton = new JButton("Instalar FTP");
         installCDButton = new JButton("Instalar FTP desde CD");
         statusButton = new JButton("Verificar Estado");
@@ -27,12 +28,13 @@ public class FTPConfigView extends JFrame{
         stopButton = new JButton("Detener FTP");
         statusLabel = new JLabel("Estado del servidor FTP: ");
         isRunningLabel = new JLabel("Estado del servidor FTP: ");
+        changeStatusLabel = new JLabel("En espera...");
 
         JPanel buttonStatusPanel = new JPanel();
-        buttonStatusPanel.add(statusButton);
         buttonStatusPanel.add(startButton);
         buttonStatusPanel.add(restartButton);
         buttonStatusPanel.add(stopButton);
+        buttonStatusPanel.add(changeStatusLabel);
 
         JPanel buttonInstallPanel = new JPanel();
         buttonInstallPanel.add(installCDButton);
@@ -40,9 +42,10 @@ public class FTPConfigView extends JFrame{
 
         JPanel statusPanel = new JPanel();
         statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.Y_AXIS));
+        statusPanel.add(statusButton);
         statusPanel.add(statusLabel);
         statusPanel.add(isRunningLabel);
-        
+
         setLayout(new BorderLayout());
         add(buttonInstallPanel, BorderLayout.NORTH);
         add(buttonStatusPanel, BorderLayout.CENTER);
@@ -55,7 +58,7 @@ public class FTPConfigView extends JFrame{
         setVisible(true);
     }
 
-    public JButton getInstallButton(){
+    public JButton getInstallButton() {
         return installButton;
     }
 
@@ -66,9 +69,11 @@ public class FTPConfigView extends JFrame{
     public JButton getInstallCDButton() {
         return installCDButton;
     }
-    public JLabel getStatusLabel(){
+
+    public JLabel getStatusLabel() {
         return statusLabel;
     }
+
     public JButton getStartButton() {
         return startButton;
     }
@@ -81,7 +86,11 @@ public class FTPConfigView extends JFrame{
         return stopButton;
     }
 
-    public JLabel getIsRunningLabel(){
+    public JLabel getIsRunningLabel() {
         return isRunningLabel;
+    }
+
+    public JLabel getChangeStatusLabel() {
+        return changeStatusLabel;
     }
 }
