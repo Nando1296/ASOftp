@@ -65,6 +65,7 @@ public class FTPConfigController {
 
                 if (exitCode == 0) {
                     System.out.println("Vsftpd instalado correctamente.");
+                    SwingUtilities.invokeLater(() -> view.getStatusInstallFtp().setText("Estado: Vsftpd instalado correctamente."));
                 } else {
                     System.err.println("Error al instalar Vsftpd. Código de salida: " + exitCode);
                     System.err.println("Salida del proceso: " + output);

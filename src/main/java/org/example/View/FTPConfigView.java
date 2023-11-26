@@ -15,6 +15,7 @@ public class FTPConfigView extends JFrame {
     private JLabel statusLabel;
     private JLabel isRunningLabel;
     private JLabel changeStatusLabel;
+    private JLabel statusInstallFtp;
 
     public FTPConfigView() {
         initializeUI();
@@ -24,13 +25,23 @@ public class FTPConfigView extends JFrame {
         installButton = new JButton("Instalar FTP");
         installCDButton = new JButton("Instalar FTP desde CD");
         statusButton = new JButton("Verificar Estado");
-        startButton = new JButton("Iniciar FTP");
+        startButton = new JButton("Iniciar FTP Online");
         restartButton = new JButton("Reiniciar FTP");
         stopButton = new JButton("Detener FTP");
         mostrarConf = new JButton("Mostrar Configuración");
         statusLabel = new JLabel("Estado del servidor FTP: ");
         isRunningLabel = new JLabel("Estado del servidor FTP: ");
         changeStatusLabel = new JLabel("En espera...");
+        statusInstallFtp = new JLabel("Estado de la instalación: ");        
+
+        Color colorCeleste = new Color(173, 216, 230);
+        installButton.setBackground(colorCeleste);
+        installCDButton.setBackground(colorCeleste);
+        statusButton.setBackground(colorCeleste);
+        startButton.setBackground(colorCeleste);
+        restartButton.setBackground(colorCeleste);
+        stopButton.setBackground(colorCeleste);
+        mostrarConf.setBackground(colorCeleste);
 
         JPanel buttonStatusPanel = new JPanel();
         buttonStatusPanel.add(startButton);
@@ -48,6 +59,7 @@ public class FTPConfigView extends JFrame {
         statusPanel.add(statusButton);
         statusPanel.add(statusLabel);
         statusPanel.add(isRunningLabel);
+        statusPanel.add(statusInstallFtp);
 
         setLayout(new BorderLayout());
         add(buttonInstallPanel, BorderLayout.NORTH);
@@ -55,8 +67,46 @@ public class FTPConfigView extends JFrame {
         add(statusPanel, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(500, 400);
         setLocationRelativeTo(null);
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+
+
+        GridBagLayout layout = new GridBagLayout();
+        setLayout(layout);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        gbc.gridx = 0; // Primera columna
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+
+        add(installCDButton, gbc);
+        gbc.gridy++;
+        add(installButton, gbc);
+        gbc.gridy++;
+        add(statusInstallFtp, gbc);
+        gbc.gridy++;
+        add(mostrarConf, gbc);
+        gbc.gridy++;
+        add(statusButton, gbc);
+        gbc.gridy++;
+        add(statusLabel, gbc);
+        gbc.gridy++;
+        add(isRunningLabel, gbc);
+
+        gbc.gridx = 1; // Segunda columna
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        add(startButton, gbc);
+        gbc.gridy++;
+        add(restartButton, gbc);
+        gbc.gridy++;
+        add(stopButton, gbc);
+        gbc.gridy++;
+        add(changeStatusLabel, gbc);
+        gbc.gridy++;
 
         setVisible(true);
     }
@@ -96,5 +146,11 @@ public class FTPConfigView extends JFrame {
     public JLabel getChangeStatusLabel() {
         return changeStatusLabel;
     }
-    public JButton getMostrarConf(){return mostrarConf;}
+    public JButton getMostrarConf(){
+        return mostrarConf;
+    }
+
+    public JLabel getStatusInstallFtp(){
+        return statusInstallFtp;
+        }
 }
