@@ -165,6 +165,7 @@ public class FTPConfigController {
 
                 if (installExitCode == 0) {
                     System.out.println("Vsftpd instalado correctamente desde el repositorio local.");
+                    SwingUtilities.invokeLater(() -> view.getStatusInstallFtp().setText("Estado: Vsftpd instalado correctamente desde el repositorio local."));
                 } else {
                     System.err.println(
                             "Error al instalar Vsftpd desde el repositorio local. Código de salida:" + installExitCode);
