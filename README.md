@@ -49,7 +49,7 @@ Al iniciar la aplicación podremos ver un total de 7 botones y 4 textos de estad
 7. Botón "Iniciar FTP": Si el servicio vsFTPd está instalado lo inicia. Requiere contraseña de SuperUsuario.
 8. Botón "Reiniciar FTP": Si el servicio vsFTPd está instalado lo reinicia. Requiere contraseña de SuperUsuario.
 9. Botón "Detener FTP": Si el servicio vsFTPd está instalado lo detiene. Requiere contraseña de SuperUsuario.
-10.Texto "En espera..."
+10. Texto "En espera..."
 10.1. "En espera...": La aplicación fue iniciada recientemente y no se interactuó con ninguno de los botones.
 10.2. "Servicio iniciado con éxito": El botón "Iniciar FTP" ejecutó su tarea con éxito y el servicio está corriendo.
 10.3. "Servicio reiniciado con éxito": El botón "Reiniciar FTP" ejecutó su tarea con éxito y el servicio fue detenido y fue iniciado nuevamente.
