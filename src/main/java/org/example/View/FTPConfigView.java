@@ -22,10 +22,10 @@ public class FTPConfigView extends JFrame {
     }
 
     private void initializeUI() {
-        installButton = new JButton("Instalar FTP");
+        installButton = new JButton("Instalar FTP Online");
         installCDButton = new JButton("Instalar FTP desde CD");
         statusButton = new JButton("Verificar Estado");
-        startButton = new JButton("Iniciar FTP Online");
+        startButton = new JButton("Iniciar FTP");
         restartButton = new JButton("Reiniciar FTP");
         stopButton = new JButton("Detener FTP");
         mostrarConf = new JButton("Mostrar Configuración");
